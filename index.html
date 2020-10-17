@@ -31,7 +31,8 @@
     // Initialize Firebase
     firebase.initializeApp(firebaseConfig);
     var db = firebase.firestore();
-    db.collection("Class").get().then((querySnapshot) => {
+
+db.collection("Class").get().then((querySnapshot) => {
     querySnapshot.forEach((d1) => {
         v = d1.data();
         console.log(`${d1.id} => ${v["Status"]}`);
@@ -46,6 +47,21 @@ function CreateButton(key,value) {
     btn.addEventListener ("click", function() {
         ChangeStudentStatus(btn,key,value);
     });
+    setButtonColor(btn,key);
+}
+
+function setButtonColor(btn,key) {
+    switch (btn.innerHTML) {
+        case (key+"<br>Uncalled"):
+            btn.style.backgroundColor = 'lightblue';
+            break;
+        case (key+"<br>Called"):
+            btn.style.backgroundColor = 'lightyellow';
+            break;
+        case (key+"<br>Sent"):
+            btn.style.backgroundColor = 'lightgreen';
+            break;
+    }
 }
 
 function ChangeStudentStatus(btn,key,value){
@@ -62,8 +78,8 @@ function ChangeStudentStatus(btn,key,value){
             newValue = "Uncalled";
             break;
     }
-
     btn.innerHTML = key+"<br>"+newValue;
+    setButtonColor(btn,key);
     db.collection("Class").doc(key).update({
     Status: newValue})
     .then(function(docRef) {
