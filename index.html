@@ -1,0 +1,78 @@
+<html>
+<head>
+</head>
+<body>
+ <h1>תלמידי כיתה - מקום לחלום</h1>
+<!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
+
+  <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-app.js"></script>
+
+  <!-- If you enabled Analytics in your project, add the Firebase SDK for Analytics -->
+  <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-analytics.js"></script>
+
+  <!-- Add Firebase products that you want to use -->
+  <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-firestore.js"></script>
+  <script>
+    // TODO: Replace the following with your app's Firebase project configuration
+    // For Firebase JavaScript SDK v7.20.0 and later, `measurementId` is an optional field
+    var firebaseConfig = {
+    apiKey: "AIzaSyAKmqufEPwJ2whJfJ-VUwR1Rbf5evmb_OY",
+    authDomain: "releasethem-95d72.firebaseapp.com",
+    databaseURL: "https://releasethem-95d72.firebaseio.com",
+    projectId: "releasethem-95d72",
+    storageBucket: "releasethem-95d72.appspot.com",
+    messagingSenderId: "834328732883",
+    appId: "1:834328732883:web:57a4f0d65b9bab016ae026"
+     };
+
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.firestore();
+    db.collection("Class").get().then((querySnapshot) => {
+    querySnapshot.forEach((d1) => {
+        v = d1.data();
+        console.log(`${d1.id} => ${v["Status"]}`);
+        CreateButton(d1.id,v["Status"]);
+    });
+});
+
+function CreateButton(key,value) {
+    var btn = document.createElement("BUTTON");   // Create a <button> element
+    btn.innerHTML = key+"<br>"+value;                   // Insert text
+    document.body.appendChild(btn);               // Append <button> to <body>
+    btn.addEventListener ("click", function() {
+        ChangeStudentStatus(btn,key,value);
+    });
+}
+
+function ChangeStudentStatus(btn,key,value){
+
+    let newValue = "";
+    switch (btn.innerHTML) {
+        case (key+"<br>Uncalled"):
+            newValue = "Called";
+            break;
+        case (key+"<br>Called"):
+            newValue = "Sent";
+            break;
+        case (key+"<br>Sent"):
+            newValue = "Uncalled";
+            break;
+    }
+
+    btn.innerHTML = key+"<br>"+newValue;
+    db.collection("Class").doc(key).update({
+    Status: newValue})
+    .then(function(docRef) {
+        console.log("Document written with ID: ", key);
+    })
+    .catch(function(error) {
+        console.error("Error adding document: ", error);
+    });
+}
+  </script>
+</body>
+</html>
