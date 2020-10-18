@@ -1,0 +1,204 @@
+<html>
+<head>
+    <style>
+        table, th, td {
+          border: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+ <h1>ילדי גן - מקום לחלום</h1>
+<!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
+
+  <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-app.js"></script>
+
+  <!-- If you enabled Analytics in your project, add the Firebase SDK for Analytics -->
+  <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-analytics.js"></script>
+
+  <!-- Add Firebase products that you want to use -->
+  <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.24.0/firebase-firestore.js"></script>
+  <script>
+    // TODO: Replace the following with your app's Firebase project configuration
+    // For Firebase JavaScript SDK v7.20.0 and later, `measurementId` is an optional field
+    var firebaseConfig = {
+    apiKey: "AIzaSyAKmqufEPwJ2whJfJ-VUwR1Rbf5evmb_OY",
+    authDomain: "releasethem-95d72.firebaseapp.com",
+    databaseURL: "https://releasethem-95d72.firebaseio.com",
+    projectId: "releasethem-95d72",
+    storageBucket: "releasethem-95d72.appspot.com",
+    messagingSenderId: "834328732883",
+    appId: "1:834328732883:web:57a4f0d65b9bab016ae026"
+     };
+
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.firestore();
+
+db.collection("Gan").get().then((querySnapshot) => {
+    querySnapshot.forEach((d1) => {
+        v = d1.data();
+        console.log(`${d1.id} => ${v["Status"]}`);
+        updateButton(d1.id,v["Status"]);
+    });
+});
+function updateButton(studentName,status) {
+        var x = document.getElementsByName(studentName);
+        var node = x[0];
+        node.value = status;
+        switch (node.value) {
+        case ("Uncalled"):
+            node.innerHTML = node.name + "<br>" +"טרם נקרא/ה";
+            node.style.backgroundColor = 'lightblue'
+            break;
+        case ("Called"):
+            node.innerHTML = node.name + "<br>" +"נקרא/ה";
+            node.style.backgroundColor = 'lightyellow';
+            break;
+        case ("Sent"):
+            node.innerHTML = node.name + "<br>" +"יוצא/ת";
+            node.style.backgroundColor = 'lightgreen';
+            break;
+      }
+    }
+
+function CreateButton(key,value) {
+    var btn = document.createElement("BUTTON");   // Create a <button> element
+    btn.innerHTML = key+"<br>"+value;                   // Insert text
+    document.body.appendChild(btn);               // Append <button> to <body>
+    //btn.onclick = ChangeStudentStatus(btn,key,value);        
+    btn.addEventListener ("click", function() {
+        //alert("did something");
+        ChangeStudentStatus(btn,key,value);
+    });
+    setButtonColor(btn,key);
+}
+
+function setButtonColor(btn,key) {
+    switch (btn.innerHTML) {
+        case (key+"<br>Uncalled"):
+            btn.style.backgroundColor = 'lightblue';
+            break;
+        case (key+"<br>Called"):
+            btn.style.backgroundColor = 'lightyellow';
+            break;
+        case (key+"<br>Sent"):
+            btn.style.backgroundColor = 'lightgreen';
+            break;
+    }
+}
+
+    function ChangeStudentStatus(btn,key,value){
+
+        let newValue = "";
+        switch (btn.innerHTML) {
+            case (key+"<br>Uncalled"):
+                newValue = "Called";
+                break;
+            case (key+"<br>Called"):
+                newValue = "Sent";
+                break;
+            case (key+"<br>Sent"):
+                newValue = "Uncalled";
+                break;
+        }
+        btn.innerHTML = key+"<br>"+newValue;
+        setButtonColor(btn,key);
+        db.collection("Class").doc(key).update({
+        Status: newValue})
+        .then(function(docRef) {
+            console.log("Document written with ID: ", key);
+        })
+        .catch(function(error) {
+            console.error("Error adding document: ", error);
+        });
+        }
+  </script>
+  
+ 
+  <script type="text/javascript">
+
+    function handleClick(evt) {
+      var node = evt.target || evt.srcElement;
+      
+      switch (node.value) {
+        case ("Uncalled"):
+            node.value = "Called";
+            node.innerHTML = node.name + "<br>" +"נקרא/ה";
+            node.style.backgroundColor = 'lightyellow';
+            break;
+        case ("Called"):
+            node.value = "Sent";
+            node.innerHTML = node.name + "<br>" +"יוצא/ת";
+            node.style.backgroundColor = 'lightgreen';
+            break;
+        case ("Sent"):
+            node.value = "Uncalled";
+            node.innerHTML = node.name + "<br>" +"טרם נקרא/ה";
+            node.style.backgroundColor = 'lightblue';
+            break;
+      }
+      var newValue = node.value;
+      db.collection("Gan").doc(node.name).update({
+        Status: node.value})
+        .then(function(docRef) {
+            console.log("Document written with ID: ", node.name);
+        })
+        .catch(function(error) {
+            console.error("Error adding document: ", error);
+        });
+    }
+</script>
+<style> .equal-width td { width: 50%; } </style>
+<style>
+    .aligncenter{text-align:center;}
+</style>
+  <table id="table1" style="border: 2px solid; width: 90%;"  onclick="handleClick(event);">
+      <tbody>
+         <tr> 
+            <td class="aligncenter" style="border:1px solid;">
+                <button width="200" name="יובל א" value="Uncalled" onclick="handleClick(event);">יובל א<br>טרם נקראה</button>
+            </td>
+            <td class="aligncenter" style="border:1px solid;">
+                <button width="30px" name="גפן א" value="Uncalled" onclick="handleClick(event);">גפן א<br>טרם נקראה</button>
+            </td>
+            <td class="aligncenter" style="border:1px solid;">
+                <button name="אמה א" value="Uncalled" onclick="handleClick(event);">אמה א<br>טרם נקראה</button>
+            </td>
+            <td class="aligncenter" style="border:1px solid;">
+                <button name="בן ד" value="Uncalled" onclick="handleClick(event);">בן ד<br>טרם נקראה</button>
+            </td>
+            <td class="aligncenter" style="border:1px solid;">
+                <button name="אומה ג" value="Uncalled" onclick="handleClick(event);">אומה ג<br>טרם נקראה</button>
+            </td>
+            <td class="aligncenter" style="border:1px solid;">
+                <button name="גפן ב" value="Uncalled" onclick="handleClick(event);">גפן ב<br>טרם נקראה</button>
+            </td>
+        </tr>
+         <tr> 
+            <td class="aligncenter" style="border:1px solid;">
+                <button name="טליה ה" value="Uncalled" onclick="handleClick(event);">טליה ה<br>טרם נקראה</button>
+            </td>
+            <td class="aligncenter" style="border:1px solid;">
+                <button name="נעמה ב" value="Uncalled" onclick="handleClick(event);">נעמה ב<br>טרם נקראה</button>
+            </td>
+            <td class="aligncenter" style="border:1px solid;">
+                <button name="שירה ב" value="Uncalled" onclick="handleClick(event);">שירה ב<br>טרם נקראה</button>
+            </td>
+            <td class="aligncenter" style="border:1px solid;">
+                <button name="שי ו" value="Uncalled" onclick="handleClick(event);">שי ו<br>טרם נקראה</button>
+            </td>
+            <td class="aligncenter" style="border:1px solid;">
+                <button name="קאי ז" value="Uncalled" onclick="handleClick(event);">קאי ז<br>טרם נקראה</button>
+            </td>
+            <td class="aligncenter" style="border:1px solid;">
+                <button name="עידן ז" value="Uncalled" onclick="handleClick(event);">עידן ז<br>טרם נקראה</button>
+            </td>
+            </tr>
+  
+     </tbody>
+  </table>
+</body>
+</html>
