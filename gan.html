@@ -44,6 +44,14 @@ db.collection("Gan").get().then((querySnapshot) => {
         updateButton(d1.id,v["Status"]);
     });
 });
+      
+db.collection("Gan").onSnapshot(function(querySnapshot) {
+        querySnapshot.forEach(function(d1) {
+            console.log(`${d1.id} => ${d1.data()["Status"]}`);
+            updateButton(d1.id,d1.data()["Status"]);
+        });
+    });
+
 function updateButton(studentName,status) {
         var x = document.getElementsByName(studentName);
         var node = x[0];
