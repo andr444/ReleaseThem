@@ -16,7 +16,7 @@
             * flex-direction: row;
             * flex-wrap: wrap;
             */
-            flex-flow: row wrap;
+            flex-flow: row-reverse wrap;
             
             /* Then we define how is distributed the remaining space */
             justify-content: space-around;
@@ -40,6 +40,7 @@
             text-align: center;
             flex-shrink: 1  ;
             }
+        h1 {text-align: center;}
     </style>
 </head>
 <body>
@@ -107,32 +108,32 @@
       }
     }
 
-    function handleLiClick(name) 
+    function handleLiClick(studentName) 
     {
-        var node = document.getElementById(name);
+        var node = document.getElementById(studentName);
         switch (node.getAttribute('data-value')) {
         case ("Uncalled"):
             node.setAttribute('data-value',"Called");
-            node.innerHTML = name + "<br>" +"נקרא/ה";
+            node.innerHTML = studentName + "<br>" +"נקרא/ה";
             node.style.backgroundColor = 'lightyellow';
             break;
         case ("Called"):
             node.setAttribute('data-value',"Sent");
-            node.innerHTML = name + "<br>" +"יוצא/ת";
+            node.innerHTML = studentName + "<br>" +"יוצא/ת";
             node.style.backgroundColor = 'lightgreen';
             break;
         case ("Sent"):
             node.setAttribute('data-value',"Uncalled");
-            node.innerHTML = name + "<br>" +"טרם נקרא/ה";
+            node.innerHTML = studentName + "<br>" +"טרם נקרא/ה";
             node.style.backgroundColor = 'lightblue';
             break;
         }
-        console.log(name+","+document.getElementById(name).getAttribute('data-value'));
+        console.log(studentName+","+document.getElementById(studentName).getAttribute('data-value'));
         var newValue = node.getAttribute('data-value');
-        db.collection("Gan").doc(name).update({
+        db.collection("Gan").doc(studentName).update({
         Status: newValue})
         .then(function(docRef) {
-            console.log("Document written with ID: ", name);
+            console.log("Document written with ID: ", studentName);
         })
         .catch(function(error) {
             console.error("Error adding document: ", error);
@@ -142,19 +143,33 @@
 </script>
 
   <ul class="flex-container">
-    <li class="flex-item" id="יובל א" name="יובל א" data-value="Uncalled" onclick="handleLiClick(this.id);">יובל א<br>טרם נקרא/ה</li>
-    <li class="flex-item" id="גפן א" name="גפן א" data-value="Uncalled" onclick="handleLiClick(this.id);">גפן א<br>טרם נקרא/ה</li>
-    <li class="flex-item" id="אמה א" name="אמה א" data-value="Uncalled" onclick="handleLiClick(this.id);">אמה א<br>טרם נקרא/ה</li>
-    <li class="flex-item" id="גפן ב" name="גפן ב" data-value="Uncalled" onclick="handleLiClick(this.id);">גפן ב<br>טרם נקרא/ה</li>
-    <li class="flex-item" id="אומה ג" name="אומה ג" data-value="Uncalled" onclick="handleLiClick(this.id);">אומה ג<br>טרם נקרא/ה</li>
-    <li class="flex-item" id="בן ד" name="בן ד" data-value="Uncalled" onclick="handleLiClick(this.id)">בן ד<br>טרם נקראה</li>
+    <li class="flex-item" id="יובל א" data-value="Uncalled" onclick="handleLiClick(this.id);">יובל א<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="גפן א" data-value="Uncalled" onclick="handleLiClick(this.id);">גפן א<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="אמה א" data-value="Uncalled" onclick="handleLiClick(this.id);">אמה א<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="גפן ב" data-value="Uncalled" onclick="handleLiClick(this.id);">גפן ב<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="אומה ג" data-value="Uncalled" onclick="handleLiClick(this.id);">אומה ג<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="בן ד" data-value="Uncalled" onclick="handleLiClick(this.id)">בן ד<br>טרם נקראה</li>
     
-    <li class="flex-item" id="טליה ה" name="טליה ה" data-value="Uncalled" onclick="handleLiClick(this.id);">טליה ה<br>טרם נקרא/ה</li>
-    <li class="flex-item" id="נעמה ב" name="נעמה ב" data-value="Uncalled" onclick="handleLiClick(this.id);">נעמה ב<br>טרם נקרא/ה</li>
-    <li class="flex-item" id="שירה ב" name="שירה ב" data-value="Uncalled" onclick="handleLiClick(this.id);">שירה ב<br>טרם נקרא/ה</li>
-    <li class="flex-item" id="שי ו" name="שי ו" data-value="Uncalled" onclick="handleLiClick(this.id);">שי ו<br>טרם נקרא/ה</li>
-    <li class="flex-item" id="קאי ז" name="קאי ז" data-value="Uncalled" onclick="handleLiClick(this.id);">קאי ז<br>טרם נקרא/ה</li>
-    <li class="flex-item" id="עידן ז" name="עידן ז" data-value="Uncalled" onclick="handleLiClick(this.id)">עידן ז<br>טרם נקראה</li>
+    <li class="flex-item" id="טליה ה" data-value="Uncalled" onclick="handleLiClick(this.id);">טליה ה<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="נעמה ב" data-value="Uncalled" onclick="handleLiClick(this.id);">נעמה ב<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="שירה ב" data-value="Uncalled" onclick="handleLiClick(this.id);">שירה ב<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="שי ו" data-value="Uncalled" onclick="handleLiClick(this.id);">שי ו<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="קאי ז" data-value="Uncalled" onclick="handleLiClick(this.id);">קאי ז<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="עידן ז" data-value="Uncalled" onclick="handleLiClick(this.id)">עידן ז<br>טרם נקראה</li>
+
+    <li class="flex-item" id="מאור ט" data-value="Uncalled" onclick="handleLiClick(this.id);">מאור ט<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="עומר ל" data-value="Uncalled" onclick="handleLiClick(this.id);">עומר ל<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="זואי ל" data-value="Uncalled" onclick="handleLiClick(this.id);">זואי ל<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="ריי ל" data-value="Uncalled" onclick="handleLiClick(this.id);">ריי ל<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="נעמה ס" data-value="Uncalled" onclick="handleLiClick(this.id);">נעמה ס<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="האלי ע" data-value="Uncalled" onclick="handleLiClick(this.id)">האלי ע<br>טרם נקראה</li>
+
+    <li class="flex-item" id="נולה ע" data-value="Uncalled" onclick="handleLiClick(this.id);">נולה ע<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="אלכסנדרה פ" data-value="Uncalled" onclick="handleLiClick(this.id);">אלכסנדרה פ<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="ליה ר" data-value="Uncalled" onclick="handleLiClick(this.id);">ליה ר<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="יוני ר" data-value="Uncalled" onclick="handleLiClick(this.id);">יוני ר<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="ארייה ר" data-value="Uncalled" onclick="handleLiClick(this.id);">ארייה ר<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="דניאל ש" data-value="Uncalled" onclick="handleLiClick(this.id)">דניאל ש<br>טרם נקראה</li>
   </ul>
 </body>
 </html>
