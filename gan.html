@@ -5,6 +5,42 @@
           border: 1px solid black;
         }
     </style>
+    <style>
+        .flex-container {
+            /* We first create a flex layout context */
+            display: flex;
+            
+            /* Then we define the flow direction 
+                and if we allow the items to wrap 
+            * Remember this is the same as:
+            * flex-direction: row;
+            * flex-wrap: wrap;
+            */
+            flex-flow: row wrap;
+            
+            /* Then we define how is distributed the remaining space */
+            justify-content: space-around;
+            
+            padding: 0;
+            margin: 0;
+            list-style: none;
+            align-items: stretch;
+            }
+
+        .flex-item {
+            background: lightblue;
+            padding: 5px;
+            width: 150px;
+            height: 100px;
+            margin-top: 10px;
+            line-height: 50px;
+            color: black;
+            font-weight: normal;
+            font-size: 2em;
+            text-align: center;
+            flex-shrink: 1  ;
+            }
+    </style>
 </head>
 <body>
  <h1>ילדי גן - מקום לחלום</h1>
@@ -37,176 +73,88 @@
     firebase.initializeApp(firebaseConfig);
     var db = firebase.firestore();
 
-db.collection("Gan").get().then((querySnapshot) => {
-    querySnapshot.forEach((d1) => {
-        v = d1.data();
-        console.log(`${d1.id} => ${v["Status"]}`);
-        updateButton(d1.id,v["Status"]);
-    });
-});
-      
-db.collection("Gan").onSnapshot(function(querySnapshot) {
-        querySnapshot.forEach(function(d1) {
-            console.log(`${d1.id} => ${d1.data()["Status"]}`);
-            updateButton(d1.id,d1.data()["Status"]);
+    db.collection("Gan").get().then((querySnapshot) => {
+        querySnapshot.forEach((d1) => {
+            v = d1.data();
+            console.log(`${d1.id} => ${v["Status"]}`);
+            updateLi(d1.id,d1.data()["Status"]);
         });
     });
 
-function updateButton(studentName,status) {
-        var x = document.getElementsByName(studentName);
-        var node = x[0];
-        node.value = status;
-        switch (node.value) {
+    db.collection("Gan").onSnapshot(function(querySnapshot) {
+            querySnapshot.forEach(function(d1) {
+                //console.log(`${d1.id} => ${d1.data()["Status"]}`);
+                updateLi(d1.id,d1.data()["Status"]);
+            });
+        });
+
+    function updateLi(studentName,status) {
+        var node = document.getElementById(studentName);
+        node.setAttribute('data-value',status);
+        switch (status) {
         case ("Uncalled"):
-            node.innerHTML = node.name + "<br>" +"טרם נקרא/ה";
+            node.innerHTML = studentName + "<br>" +"טרם נקרא/ה";
             node.style.backgroundColor = 'lightblue'
             break;
         case ("Called"):
-            node.innerHTML = node.name + "<br>" +"נקרא/ה";
+            node.innerHTML = studentName + "<br>" +"נקרא/ה";
             node.style.backgroundColor = 'lightyellow';
             break;
         case ("Sent"):
-            node.innerHTML = node.name + "<br>" +"יוצא/ת";
+            node.innerHTML = studentName + "<br>" +"יוצא/ת";
             node.style.backgroundColor = 'lightgreen';
             break;
       }
     }
 
-function CreateButton(key,value) {
-    var btn = document.createElement("BUTTON");   // Create a <button> element
-    btn.innerHTML = key+"<br>"+value;                   // Insert text
-    document.body.appendChild(btn);               // Append <button> to <body>
-    //btn.onclick = ChangeStudentStatus(btn,key,value);        
-    btn.addEventListener ("click", function() {
-        //alert("did something");
-        ChangeStudentStatus(btn,key,value);
-    });
-    setButtonColor(btn,key);
-}
-
-function setButtonColor(btn,key) {
-    switch (btn.innerHTML) {
-        case (key+"<br>Uncalled"):
-            btn.style.backgroundColor = 'lightblue';
-            break;
-        case (key+"<br>Called"):
-            btn.style.backgroundColor = 'lightyellow';
-            break;
-        case (key+"<br>Sent"):
-            btn.style.backgroundColor = 'lightgreen';
-            break;
-    }
-}
-
-    function ChangeStudentStatus(btn,key,value){
-
-        let newValue = "";
-        switch (btn.innerHTML) {
-            case (key+"<br>Uncalled"):
-                newValue = "Called";
-                break;
-            case (key+"<br>Called"):
-                newValue = "Sent";
-                break;
-            case (key+"<br>Sent"):
-                newValue = "Uncalled";
-                break;
-        }
-        btn.innerHTML = key+"<br>"+newValue;
-        setButtonColor(btn,key);
-        db.collection("Class").doc(key).update({
-        Status: newValue})
-        .then(function(docRef) {
-            console.log("Document written with ID: ", key);
-        })
-        .catch(function(error) {
-            console.error("Error adding document: ", error);
-        });
-        }
-  </script>
-  
- 
-  <script type="text/javascript">
-
-    function handleClick(evt) {
-      var node = evt.target || evt.srcElement;
-      
-      switch (node.value) {
+    function handleLiClick(name) 
+    {
+        var node = document.getElementById(name);
+        switch (node.getAttribute('data-value')) {
         case ("Uncalled"):
-            node.value = "Called";
-            node.innerHTML = node.name + "<br>" +"נקרא/ה";
+            node.setAttribute('data-value',"Called");
+            node.innerHTML = name + "<br>" +"נקרא/ה";
             node.style.backgroundColor = 'lightyellow';
             break;
         case ("Called"):
-            node.value = "Sent";
-            node.innerHTML = node.name + "<br>" +"יוצא/ת";
+            node.setAttribute('data-value',"Sent");
+            node.innerHTML = name + "<br>" +"יוצא/ת";
             node.style.backgroundColor = 'lightgreen';
             break;
         case ("Sent"):
-            node.value = "Uncalled";
-            node.innerHTML = node.name + "<br>" +"טרם נקרא/ה";
+            node.setAttribute('data-value',"Uncalled");
+            node.innerHTML = name + "<br>" +"טרם נקרא/ה";
             node.style.backgroundColor = 'lightblue';
             break;
-      }
-      var newValue = node.value;
-      db.collection("Gan").doc(node.name).update({
-        Status: node.value})
+        }
+        console.log(name+","+document.getElementById(name).getAttribute('data-value'));
+        var newValue = node.getAttribute('data-value');
+        db.collection("Gan").doc(name).update({
+        Status: newValue})
         .then(function(docRef) {
-            console.log("Document written with ID: ", node.name);
+            console.log("Document written with ID: ", name);
         })
         .catch(function(error) {
             console.error("Error adding document: ", error);
         });
     }
+
 </script>
-<style> .equal-width td { width: 50%; } </style>
-<style>
-    .aligncenter{text-align:center;}
-</style>
-  <table id="table1" style="border: 2px solid; width: 90%;">
-      <tbody>
-         <tr> 
-            <td class="aligncenter" style="border:1px solid;">
-                <button width="200" name="יובל א" value="Uncalled" onclick="handleClick(event);">יובל א<br>טרם נקראה</button>
-            </td>
-            <td class="aligncenter" style="border:1px solid;">
-                <button width="30px" name="גפן א" value="Uncalled" onclick="handleClick(event);">גפן א<br>טרם נקראה</button>
-            </td>
-            <td class="aligncenter" style="border:1px solid;">
-                <button name="אמה א" value="Uncalled" onclick="handleClick(event);">אמה א<br>טרם נקראה</button>
-            </td>
-            <td class="aligncenter" style="border:1px solid;">
-                <button name="בן ד" value="Uncalled" onclick="handleClick(event);">בן ד<br>טרם נקראה</button>
-            </td>
-            <td class="aligncenter" style="border:1px solid;">
-                <button name="אומה ג" value="Uncalled" onclick="handleClick(event);">אומה ג<br>טרם נקראה</button>
-            </td>
-            <td class="aligncenter" style="border:1px solid;">
-                <button name="גפן ב" value="Uncalled" onclick="handleClick(event);">גפן ב<br>טרם נקראה</button>
-            </td>
-        </tr>
-         <tr> 
-            <td class="aligncenter" style="border:1px solid;">
-                <button name="טליה ה" value="Uncalled" onclick="handleClick(event);">טליה ה<br>טרם נקראה</button>
-            </td>
-            <td class="aligncenter" style="border:1px solid;">
-                <button name="נעמה ב" value="Uncalled" onclick="handleClick(event);">נעמה ב<br>טרם נקראה</button>
-            </td>
-            <td class="aligncenter" style="border:1px solid;">
-                <button name="שירה ב" value="Uncalled" onclick="handleClick(event);">שירה ב<br>טרם נקראה</button>
-            </td>
-            <td class="aligncenter" style="border:1px solid;">
-                <button name="שי ו" value="Uncalled" onclick="handleClick(event);">שי ו<br>טרם נקראה</button>
-            </td>
-            <td class="aligncenter" style="border:1px solid;">
-                <button name="קאי ז" value="Uncalled" onclick="handleClick(event);">קאי ז<br>טרם נקראה</button>
-            </td>
-            <td class="aligncenter" style="border:1px solid;">
-                <button name="עידן ז" value="Uncalled" onclick="handleClick(event);">עידן ז<br>טרם נקראה</button>
-            </td>
-            </tr>
-  
-     </tbody>
-  </table>
+
+  <ul class="flex-container">
+    <li class="flex-item" id="יובל א" name="יובל א" data-value="Uncalled" onclick="handleLiClick(this.id);">יובל א<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="גפן א" name="גפן א" data-value="Uncalled" onclick="handleLiClick(this.id);">גפן א<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="אמה א" name="אמה א" data-value="Uncalled" onclick="handleLiClick(this.id);">אמה א<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="גפן ב" name="גפן ב" data-value="Uncalled" onclick="handleLiClick(this.id);">גפן ב<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="אומה ג" name="אומה ג" data-value="Uncalled" onclick="handleLiClick(this.id);">אומה ג<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="בן ד" name="בן ד" data-value="Uncalled" onclick="handleLiClick(this.id)">בן ד<br>טרם נקראה</li>
+    
+    <li class="flex-item" id="טליה ה" name="טליה ה" data-value="Uncalled" onclick="handleLiClick(this.id);">טליה ה<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="נעמה ב" name="נעמה ב" data-value="Uncalled" onclick="handleLiClick(this.id);">נעמה ב<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="שירה ב" name="שירה ב" data-value="Uncalled" onclick="handleLiClick(this.id);">שירה ב<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="שי ו" name="שי ו" data-value="Uncalled" onclick="handleLiClick(this.id);">שי ו<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="קאי ז" name="קאי ז" data-value="Uncalled" onclick="handleLiClick(this.id);">קאי ז<br>טרם נקרא/ה</li>
+    <li class="flex-item" id="עידן ז" name="עידן ז" data-value="Uncalled" onclick="handleLiClick(this.id)">עידן ז<br>טרם נקראה</li>
+  </ul>
 </body>
 </html>
